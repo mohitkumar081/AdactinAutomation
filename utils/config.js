@@ -1,5 +1,3 @@
-// Common configuration constants shared by fixtures, hooks and page objects.
-
 const APP_URL = "https://adactinhotelapp.com/";
 const DEFAULT_TIMEOUT = 60000;
 const EXPECT_TIMEOUT = 30000;

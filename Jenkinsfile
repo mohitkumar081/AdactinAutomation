@@ -1,7 +1,3 @@
-// PART 08 - Declarative Jenkins Pipeline for the Adactin Playwright framework.
-// Prerequisites in Jenkins: Pipeline, Git, GitHub Integration, HTML Publisher
-// and Allure Jenkins plugins; docker.exe on Jenkins' global PATH (see JENKINS_SETUP.md).
-
 pipeline {
     agent any
 
@@ -11,7 +7,6 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '20'))
     }
 
-    // Trigger on a GitHub push (webhook -> ngrok -> /github-webhook/) and nightly.
     triggers {
         githubPush()
         cron('H 3 * * *')
@@ -33,10 +28,6 @@ pipeline {
             steps {
                 echo "Building ${env.IMAGE_NAME}"
                 script {
-                    // BuildKit/docker-container needs --load so the image is
-                    // available to `docker run`. Jenkins runs as LocalSystem and
-                    // may use the legacy builder, which rejects --load but already
-                    // stores the image in the local daemon. Retry without it then.
                     def loadExitCode = bat(
                         script: 'docker build --load -t %IMAGE_NAME% .',
                         returnStatus: true
@@ -52,16 +43,12 @@ pipeline {
         stage('Run UI + API tests in container') {
             steps {
                 script {
-                    // returnStatus keeps the pipeline alive so reports can still be
-                    // exported and published when tests fail.
                     def testExitCode = bat(
                         script: 'docker run --name %CONTAINER_NAME% %IMAGE_NAME%',
                         returnStatus: true
                     )
                     echo "Playwright container exit code: ${testExitCode}"
 
-                    // Copy HTML report, Allure results and screenshots/videos/logs
-                    // out of the stopped container into the Jenkins workspace.
                     bat '''
                         if exist playwright-report rmdir /s /q playwright-report
                         if exist allure-results rmdir /s /q allure-results
@@ -81,7 +68,6 @@ pipeline {
 
         stage('Publish reports and archive evidence') {
             steps {
-                // Screenshots, videos, traces, Allure attachments, logs.
                 archiveArtifacts(
                     artifacts: 'playwright-report/**/*, allure-results/**/*, test-results/**/*',
                     allowEmptyArchive: true
@@ -103,7 +89,6 @@ pipeline {
 
     post {
         always {
-            // Remove the container even when tests fail or the build is aborted.
             bat 'docker rm -f %CONTAINER_NAME% >nul 2>&1 || exit /b 0'
         }
         success {

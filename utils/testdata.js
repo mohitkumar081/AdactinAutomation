@@ -1,6 +1,3 @@
-// Fresh JSON test-data loader. require() caches modules, so specs use this when
-// a value needs to be picked at runtime rather than frozen at module load.
-
 const fs = require("fs");
 const path = require("path");
 
@@ -9,11 +6,6 @@ function load(name) {
   return JSON.parse(fs.readFileSync(file, "utf8"));
 }
 
-/**
- * Returns a login dataset from loginData.json.
- * DATASET_INDEX lets the same 16 tests run against another valid user without
- * editing a spec:  DATASET_INDEX=1 npx playwright test
- */
 function loginUser() {
   const data = load("loginData");
   const users = Array.isArray(data.validUsers) && data.validUsers.length

@@ -11,7 +11,7 @@ const validUser = loginUser();
 const searchData = require("../testdata/searchData.json");
 const bookingData = require("../testdata/bookingData.json");
 
-// Helper Function: Generate Dynamic Dates
+
 function getBookingDates() {
   const today = new Date();
 
@@ -35,14 +35,14 @@ function getBookingDates() {
   };
 }
 
-// Helper Function: Complete Hotel Booking
+
 async function completeHotelBooking(page) {
   const loginPage = new LoginPage(page);
   const searchPage = new SearchHotelPage(page);
   const selectHotelPage = new SelectHotelPage(page);
   const bookingPage = new BookingPage(page);
 
-  // Login
+
   await loginPage.navigate();
 
   await loginPage.login(
@@ -52,10 +52,10 @@ async function completeHotelBooking(page) {
 
   await expect(page).toHaveURL(/SearchHotel\.php/);
 
-  // Generate Dynamic Dates
+
   const dates = getBookingDates();
 
-  // Search Hotel
+
   await searchPage.searchHotel(
     searchData.validSearch,
     dates.checkIn,
@@ -64,15 +64,15 @@ async function completeHotelBooking(page) {
 
   await expect(page).toHaveURL(/SelectHotel\.php/);
 
-  // Select First Hotel
+
   await selectHotelPage.selectFirstHotel();
 
   await expect(page).toHaveURL(/BookHotel\.php/);
 
-  // Fill Booking Details
+
   await bookingPage.fillBookingDetails(bookingData.validBooking);
 
-  // Submit Booking
+
   await bookingPage.bookHotel();
 
   await page.waitForURL(/BookingConfirm\.php/, {
@@ -80,7 +80,7 @@ async function completeHotelBooking(page) {
   });
 }
 
-// TC-02: Successful Login with Valid Credentials
+
 test("TC-02: Successful Login with Valid Credentials", async ({ page }) => {
   const loginPage = new LoginPage(page);
 
@@ -100,12 +100,12 @@ test("TC-02: Successful Login with Valid Credentials", async ({ page }) => {
   console.log("TC-02: Login successful");
 });
 
-// TC-03: Successful Hotel Search with Valid Details
+
 test("TC-03: Successful Hotel Search with Valid Details", async ({ page }) => {
   const loginPage = new LoginPage(page);
   const searchPage = new SearchHotelPage(page);
 
-  // Login
+
   await loginPage.navigate();
 
   await loginPage.login(
@@ -115,17 +115,17 @@ test("TC-03: Successful Hotel Search with Valid Details", async ({ page }) => {
 
   await expect(page).toHaveURL(/SearchHotel\.php/);
 
-  // Generate Dynamic Dates
+
   const dates = getBookingDates();
 
-  // Search Hotel
+
   await searchPage.searchHotel(
     searchData.validSearch,
     dates.checkIn,
     dates.checkOut,
   );
 
-  // Verify Search Results
+
   await expect(page).toHaveURL(/SelectHotel\.php/);
 
   await expect(
@@ -135,14 +135,14 @@ test("TC-03: Successful Hotel Search with Valid Details", async ({ page }) => {
   console.log("TC-03: Hotel search successful");
 });
 
-// TC-04: Successful Hotel Selection and Booking
+
 test("TC-04: Successful Hotel Selection and Booking", async ({ page }) => {
   const loginPage = new LoginPage(page);
   const searchPage = new SearchHotelPage(page);
   const selectHotelPage = new SelectHotelPage(page);
   const bookingPage = new BookingPage(page);
 
-  // Login
+
   await loginPage.navigate();
 
   await loginPage.login(
@@ -152,10 +152,10 @@ test("TC-04: Successful Hotel Selection and Booking", async ({ page }) => {
 
   await expect(page).toHaveURL(/SearchHotel\.php/);
 
-  // Generate Dynamic Dates
+
   const dates = getBookingDates();
 
-  // Search Hotel
+
   await searchPage.searchHotel(
     searchData.validSearch,
     dates.checkIn,
@@ -164,12 +164,12 @@ test("TC-04: Successful Hotel Selection and Booking", async ({ page }) => {
 
   await expect(page).toHaveURL(/SelectHotel\.php/);
 
-  // Select First Hotel
+
   await selectHotelPage.selectFirstHotel();
 
   await expect(page).toHaveURL(/BookHotel\.php/);
 
-  // Verify Booking Details
+
   await expect(bookingPage.hotelName).toBeVisible();
   await expect(bookingPage.location).toBeVisible();
   await expect(bookingPage.roomType).toBeVisible();
@@ -180,15 +180,15 @@ test("TC-04: Successful Hotel Selection and Booking", async ({ page }) => {
   await expect(bookingPage.finalPrice).toBeVisible();
   await expect(bookingPage.firstName).toBeVisible();
 
-  // Fill Booking Details
+
   await bookingPage.fillBookingDetails(bookingData.validBooking);
 
-  // Submit Booking
+
   await expect(bookingPage.bookNowButton).toBeEnabled();
 
   await bookingPage.bookHotel();
 
-  // Verify Booking Confirmation
+
   await page.waitForURL(/BookingConfirm\.php/, {
     timeout: 60000,
   });
@@ -209,16 +209,16 @@ test("TC-04: Successful Hotel Selection and Booking", async ({ page }) => {
   console.log("TC-04: Hotel booking successful");
 });
 
-// TC-05: Verify Booking Confirmation and Order Number
+
 test("TC-05: Verify Booking Confirmation and Order Number", async ({
   page,
 }) => {
   const confirmationPage = new BookingConfirmationPage(page);
 
-  // Complete Booking
+
   await completeHotelBooking(page);
 
-  // Verify Confirmation Page
+
   await expect(page).toHaveURL(/BookingConfirm\.php/);
 
   await expect(confirmationPage.orderNumber).toBeVisible();
@@ -231,14 +231,14 @@ test("TC-05: Verify Booking Confirmation and Order Number", async ({
   console.log("TC-05: Booking confirmation verified");
 });
 
-// TC-06: Successful Logout After Booking
+
 test("TC-06: Successful Logout After Booking", async ({ page }) => {
   const confirmationPage = new BookingConfirmationPage(page);
 
-  // Complete Booking
+
   await completeHotelBooking(page);
 
-  // Verify Booking Confirmation
+
   await expect(confirmationPage.orderNumber).toBeVisible();
 
   const orderNumber = await confirmationPage.getOrderNumber();
@@ -247,8 +247,7 @@ test("TC-06: Successful Logout After Booking", async ({ page }) => {
 
   console.log("Booking Order Number:", orderNumber);
 
-  // Logout (the page object performs the full verified logout flow:
-  // Logout.php message -> "Click here to login again" -> login page).
+
   await confirmationPage.logout();
 
   await expect(page.locator("#username")).toBeVisible();

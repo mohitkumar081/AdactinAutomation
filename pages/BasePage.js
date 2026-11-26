@@ -1,19 +1,11 @@
 const { test, expect } = require("@playwright/test");
 const wait = require("../utils/waitutil");
 
-/**
- * Core / generalized modular methods shared by every Page Object.
- * Covers navigation, explicit + implicit-style waits, common actions,
- * screenshots/attachments, logging and alert/popup handling.
- */
 class BasePage {
   constructor(page) {
     this.page = page;
   }
 
-  // ------------------------------------------------------------------
-  // Logging (appears in console and as an Allure text attachment)
-  // ------------------------------------------------------------------
   log(message) {
     console.log(message);
   }
@@ -25,10 +17,6 @@ class BasePage {
     });
   }
 
-  // ------------------------------------------------------------------
-  // Navigation
-  // ------------------------------------------------------------------
-  // Manual Part 05 uses navigate(url); navigateTo() is kept as an alias.
   async navigate(url) {
     return this.navigateTo(url);
   }
@@ -53,10 +41,6 @@ class BasePage {
     this.log(`URL matched: ${pattern}`);
   }
 
-  // ------------------------------------------------------------------
-  // Wait conditions (implemented once in utils/waitutil.js)
-  // ------------------------------------------------------------------
-  // Playwright has no true implicit wait; this emulates it globally.
   setImplicitTimeout(milliseconds = 30000) {
     return wait.setImplicitTimeout(this.page, milliseconds);
   }
@@ -80,9 +64,6 @@ class BasePage {
     return wait.waitForText(locator, text, timeout);
   }
 
-  // ------------------------------------------------------------------
-  // Common actions
-  // ------------------------------------------------------------------
   async click(locator, name = "element", options = {}) {
     return test.step(`Click: ${name}`, async () => {
       await this.waitForEnabled(locator, 30000, name);
@@ -108,10 +89,6 @@ class BasePage {
     });
   }
 
-  // ------------------------------------------------------------------
-  // Screenshots / attachments (PDF Part 04, Step 07)
-  // ------------------------------------------------------------------
-  /** Attaches a PNG to the current test (shows in Allure / HTML report). */
   async attachScreenshot(name) {
     await test.info().attach(name, {
       body: await this.page.screenshot(),
@@ -120,9 +97,6 @@ class BasePage {
     this.log(`Screenshot attached: ${name}`);
   }
 
-  // ------------------------------------------------------------------
-  // Alerts / popups
-  // ------------------------------------------------------------------
   async handleAlert(action = "accept", promptText = "", timeout = 10000) {
     return test.step(`Handle alert (${action})`, async () => {
       try {
@@ -157,9 +131,6 @@ class BasePage {
     });
   }
 
-  // ------------------------------------------------------------------
-  // Generalized Adactin login / logout
-  // ------------------------------------------------------------------
   async doLogin(username, password) {
     return test.step("Login", async () => {
       await this.fill(this.page.locator("#username"), username, "username");
@@ -176,12 +147,9 @@ class BasePage {
       this.page.getByRole("link", { name: /^Logout$/i });
 
     return test.step("Logout", async () => {
-      // The Booked Itinerary page has thousands of rows and its navigation
-      // settles very slowly. Do not block click() on that navigation;
-      // waitForURL() below performs the real logout verification.
+
       await this.click(link, "Logout link", { noWaitAfter: true });
-      // The heavy itinerary page can prevent the logout page's `load` event
-      // from ever settling, so wait only for DOM readiness and allow extra time.
+
       await this.waitForURL(/Logout\.php/, 180000, "domcontentloaded");
       await expect(
         this.page.getByText("You have successfully logged out."),

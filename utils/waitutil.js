@@ -1,6 +1,3 @@
-// Common wait helpers. BasePage delegates here so every suite uses the same
-// timing rules and there is one place to tune them.
-
 const { expect } = require("@playwright/test");
 
 function setImplicitTimeout(page, milliseconds = 30000) {

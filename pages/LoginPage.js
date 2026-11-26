@@ -2,10 +2,6 @@ const { test } = require("../fixtures/testSetup");
 const { attachStepScreenshot } = require("../utils/screenshotutil");
 const { APP_URL } = require("../utils/config");
 
-/**
- * Manual Part 05, Step 05: LoginPage with test.step + step screenshots.
- * errorMessage is retained for the existing negative test TC-07.
- */
 class LoginPage {
   constructor(page) {
     this.page = page;

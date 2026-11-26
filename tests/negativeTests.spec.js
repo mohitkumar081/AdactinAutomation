@@ -38,7 +38,7 @@ test("TC-08: Search Hotel with Missing Mandatory Fields", async ({ page }) => {
   const loginPage = new LoginPage(page);
   const searchPage = new SearchHotelPage(page);
 
-  // Login
+
   await loginPage.navigate();
 
   await loginPage.login(
@@ -46,13 +46,13 @@ test("TC-08: Search Hotel with Missing Mandatory Fields", async ({ page }) => {
     validUser.password,
   );
 
-  // Verify Search Hotel Page
+
   await expect(page).toHaveURL(/SearchHotel\.php/);
 
-  // Click Search without selecting Location
+
   await searchPage.searchButton.click();
 
-  // Verify validation message
+
   await expect(page.getByText("Please Select a Location")).toBeVisible();
 
   console.log("TC-08: Missing mandatory search field test passed.");
@@ -67,7 +67,7 @@ test("TC-09: Booking Hotel with Missing Mandatory Details", async ({
   const selectHotelPage = new SelectHotelPage(page);
   const bookingPage = new BookingPage(page);
 
-  // Login
+
   await loginPage.navigate();
 
   await loginPage.login(
@@ -75,7 +75,7 @@ test("TC-09: Booking Hotel with Missing Mandatory Details", async ({
     validUser.password,
   );
 
-  // Generate Dynamic Dates
+
   const today = new Date();
 
   const checkIn = new Date(today);
@@ -92,26 +92,26 @@ test("TC-09: Booking Hotel with Missing Mandatory Details", async ({
     return `${day}/${month}/${year}`;
   };
 
-  // Search Hotel
+
   await searchPage.searchHotel(
     searchData.validSearch,
     formatDate(checkIn),
     formatDate(checkOut),
   );
 
-  // Select First Hotel
+
   await selectHotelPage.selectFirstHotel();
 
-  // Verify Booking Page
+
   await expect(page).toHaveURL(/BookHotel\.php/);
 
-  // Leave all booking fields empty and click Book Now
+
   await bookingPage.bookNowButton.click();
 
-  // Verify First Name validation error
+
   await expect(bookingPage.firstNameError).toBeVisible();
 
-  // Verify user remains on Booking Page
+
   await expect(page).toHaveURL(/BookHotel\.php/);
 
   console.log("TC-09: Missing booking details test passed.");
@@ -127,7 +127,7 @@ test("TC-10: Booking with Invalid Credit Card Details", async ({ page }) => {
   const selectHotelPage = new SelectHotelPage(page);
   const bookingPage = new BookingPage(page);
 
-  // Login
+
   await loginPage.navigate();
 
   await loginPage.login(
@@ -135,7 +135,7 @@ test("TC-10: Booking with Invalid Credit Card Details", async ({ page }) => {
     validUser.password,
   );
 
-  // Dynamic Dates
+
   const today = new Date();
 
   const checkIn = new Date(today);
@@ -152,17 +152,17 @@ test("TC-10: Booking with Invalid Credit Card Details", async ({ page }) => {
     return `${day}/${month}/${year}`;
   };
 
-  // Search Hotel
+
   await searchPage.searchHotel(
     searchData.validSearch,
     formatDate(checkIn),
     formatDate(checkOut),
   );
 
-  // Select Hotel
+
   await selectHotelPage.selectFirstHotel();
 
-  // Fill Booking Details with Invalid Card Data
+
   await bookingPage.firstName.fill(bookingData.invalidCard.firstName);
   await bookingPage.lastName.fill(bookingData.invalidCard.lastName);
   await bookingPage.address.fill(bookingData.invalidCard.address);
@@ -182,13 +182,13 @@ test("TC-10: Booking with Invalid Credit Card Details", async ({ page }) => {
 
   await bookingPage.cvv.fill(bookingData.invalidCard.cvv);
 
-  // Click Book Now
+
   await bookingPage.bookNowButton.click();
 
-  // Verify Credit Card Validation
+
   await expect(bookingPage.creditCardError).toBeVisible();
 
-  // Verify booking was not completed
+
   await expect(page).toHaveURL(/BookHotel\.php/);
 
   console.log("TC-10: Invalid credit card test passed.");
@@ -199,13 +199,13 @@ test("TC-10: Booking with Invalid Credit Card Details", async ({ page }) => {
 
 
 test("TC-11: Access Booking Confirmation Without Login", async ({ page }) => {
-  // Directly access Booking Confirmation page without login
+
   await page.goto("https://adactinhotelapp.com/BookingConfirm.php");
 
-  // Verify user cannot access booking confirmation
+
   await expect(page).not.toHaveURL(/BookingConfirm\.php/);
 
-  // Verify Login Form is displayed
+
   await expect(page.locator("#username")).toBeVisible();
   await expect(page.locator("#password")).toBeVisible();
   await expect(page.locator("#login")).toBeVisible();

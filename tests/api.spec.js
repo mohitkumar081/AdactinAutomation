@@ -42,7 +42,6 @@ async function send(request, method, key, data) {
     const text = await response.text();
     const contentType = response.headers()["content-type"] || "";
 
-    // The public test API occasionally returns a transient 500 / HTML error.
     if (
       response.status() >= 500 ||
       !contentType.includes(expected.headers.contentType)
@@ -78,7 +77,6 @@ async function send(request, method, key, data) {
   }
 }
 
-// Each test creates its own user, so tests stay independent.
 async function registerUser(request) {
   const value = stamp();
   const data = payload("register", value);
@@ -89,7 +87,7 @@ async function registerUser(request) {
 }
 
 test.describe("API Automation - Playwright request fixture", () => {
-  // Public demo API is rate-sensitive; run these independently but serially.
+
   test.describe.configure({ mode: "serial" });
 
   test("API-01: GET all users", async ({ request }) => {

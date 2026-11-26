@@ -4,7 +4,6 @@ class SearchHotelPage extends BasePage {
   constructor(page) {
     super(page);
 
-    // Search form locators
     this.location = page.locator("#location");
     this.hotels = page.locator("#hotels");
     this.roomType = page.locator("#room_type");
@@ -14,7 +13,6 @@ class SearchHotelPage extends BasePage {
     this.adultsPerRoom = page.locator("#adult_room");
     this.childrenPerRoom = page.locator("#child_room");
 
-    // Buttons
     this.searchButton = page.locator("#Submit");
     this.resetButton = page.locator("#Reset");
   }

@@ -1,22 +1,17 @@
-// Reusable API helpers: data-driven payloads, schema, headers and response time.
-
 function typeOf(value) {
   if (Array.isArray(value)) return "array";
   if (value === null) return "null";
   return typeof value;
 }
 
-/** Replaces {timestamp} placeholders in a JSON payload template. */
 function resolvePayload(template, stamp) {
   return JSON.parse(JSON.stringify(template).replace(/\{timestamp\}/g, stamp));
 }
 
-/** Builds a full URL from baseUrl + endpoint path. */
 function buildUrl(baseUrl, endpoint) {
   return `${baseUrl.replace(/\/$/, "")}${endpoint}`;
 }
 
-/** Minimal recursive JSON-schema validator (object/array/primitive). */
 function validateSchema(value, schema, path = "body") {
   if (schema.type) {
     const actual = typeOf(value);

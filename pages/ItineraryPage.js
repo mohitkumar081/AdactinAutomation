@@ -22,8 +22,7 @@ class ItineraryPage extends BasePage {
 
   async openItinerary() {
     await test.step("Open Booked Itinerary", async () => {
-      // Do not let click() wait for this navigation: the public demo account
-      // has thousands of bookings and the itinerary response streams slowly.
+
       await this.bookedItineraryLink.click({ noWaitAfter: true });
 
       await expect(this.page).toHaveURL(/BookedItinerary\.php/, {
@@ -34,18 +33,14 @@ class ItineraryPage extends BasePage {
         timeout: 60000,
       });
 
-      // Wait until at least one itinerary row has been rendered.
       await expect(this.orderIdFields.first()).toBeVisible({ timeout: 240000 });
     });
   }
 
-  // Targeted CSS lookup, never evaluateAll() over every input on this page.
   getOrderField(orderNumber) {
     return this.page.locator(`input[value="${orderNumber}"]`);
   }
 
-  // The shared account's itinerary is capped, so the newest booking may be
-  // appended beyond the rendered portion. Best effort: returns a boolean.
   async isBookingVisible(orderNumber, timeout = 15000) {
     try {
       await this.getOrderField(orderNumber).waitFor({

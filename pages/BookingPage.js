@@ -4,7 +4,6 @@ class BookingPage extends BasePage {
   constructor(page) {
     super(page);
 
-    // Read-only hotel details
     this.hotelName = page.locator("#hotel_name_dis");
     this.location = page.locator("#location_dis");
     this.roomType = page.locator("#room_type_dis");
@@ -15,7 +14,6 @@ class BookingPage extends BasePage {
     this.gst = page.locator("#gst_dis");
     this.finalPrice = page.locator("#final_price_dis");
 
-    // Booking form fields
     this.firstName = page.locator("#first_name");
     this.lastName = page.locator("#last_name");
     this.address = page.locator("#address");
@@ -25,11 +23,9 @@ class BookingPage extends BasePage {
     this.expiryYear = page.locator("#cc_exp_year");
     this.cvv = page.locator("#cc_cvv");
 
-    // Validation messages
     this.firstNameError = page.locator("#first_name_span");
     this.creditCardError = page.locator("#cc_num_span");
 
-    // Buttons
     this.bookNowButton = page.locator("#book_now");
     this.cancelButton = page.locator("#cancel");
   }
