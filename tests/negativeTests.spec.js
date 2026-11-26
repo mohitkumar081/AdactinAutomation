@@ -5,7 +5,9 @@ const SearchHotelPage = require("../pages/SearchHotelPage");
 const SelectHotelPage = require("../pages/SelectHotelPage");
 const BookingPage = require("../pages/BookingPage");
 
-const loginData = require("../testdata/loginData.json");
+const { load, loginUser } = require("../utils/testdata");
+const loginData = load("loginData");
+const validUser = loginUser();
 const searchData = require("../testdata/searchData.json");
 const bookingData = require("../testdata/bookingData.json");
 
@@ -40,8 +42,8 @@ test("TC-08: Search Hotel with Missing Mandatory Fields", async ({ page }) => {
   await loginPage.navigate();
 
   await loginPage.login(
-    loginData.validUser.username,
-    loginData.validUser.password,
+    validUser.username,
+    validUser.password,
   );
 
   // Verify Search Hotel Page
@@ -69,8 +71,8 @@ test("TC-09: Booking Hotel with Missing Mandatory Details", async ({
   await loginPage.navigate();
 
   await loginPage.login(
-    loginData.validUser.username,
-    loginData.validUser.password,
+    validUser.username,
+    validUser.password,
   );
 
   // Generate Dynamic Dates
@@ -129,8 +131,8 @@ test("TC-10: Booking with Invalid Credit Card Details", async ({ page }) => {
   await loginPage.navigate();
 
   await loginPage.login(
-    loginData.validUser.username,
-    loginData.validUser.password,
+    validUser.username,
+    validUser.password,
   );
 
   // Dynamic Dates

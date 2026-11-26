@@ -6,7 +6,8 @@ const SelectHotelPage = require("../pages/SelectHotelPage");
 const BookingPage = require("../pages/BookingPage");
 const BookingConfirmationPage = require("../pages/BookingConfirmationPage");
 
-const loginData = require("../testdata/loginData.json");
+const { loginUser } = require("../utils/testdata");
+const validUser = loginUser();
 const searchData = require("../testdata/searchData.json");
 const bookingData = require("../testdata/bookingData.json");
 
@@ -45,8 +46,8 @@ async function completeHotelBooking(page) {
   await loginPage.navigate();
 
   await loginPage.login(
-    loginData.validUser.username,
-    loginData.validUser.password,
+    validUser.username,
+    validUser.password,
   );
 
   await expect(page).toHaveURL(/SearchHotel\.php/);
@@ -88,8 +89,8 @@ test("TC-02: Successful Login with Valid Credentials", async ({ page }) => {
   await expect(page).toHaveTitle(/Adactin.com/);
 
   await loginPage.login(
-    loginData.validUser.username,
-    loginData.validUser.password,
+    validUser.username,
+    validUser.password,
   );
 
   await expect(page).toHaveURL(/SearchHotel\.php/);
@@ -108,8 +109,8 @@ test("TC-03: Successful Hotel Search with Valid Details", async ({ page }) => {
   await loginPage.navigate();
 
   await loginPage.login(
-    loginData.validUser.username,
-    loginData.validUser.password,
+    validUser.username,
+    validUser.password,
   );
 
   await expect(page).toHaveURL(/SearchHotel\.php/);
@@ -145,8 +146,8 @@ test("TC-04: Successful Hotel Selection and Booking", async ({ page }) => {
   await loginPage.navigate();
 
   await loginPage.login(
-    loginData.validUser.username,
-    loginData.validUser.password,
+    validUser.username,
+    validUser.password,
   );
 
   await expect(page).toHaveURL(/SearchHotel\.php/);

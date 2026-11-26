@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="880" viewBox="0 0 1240 880">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#52606d"/>
+    </marker>
+    <style>
+      .box { fill:#ffffff; stroke:#c2ccd6; stroke-width:2; rx:10; }
+      .ci { fill:#e8f1ff; stroke:#4a79b6; }
+      .build { fill:#fff1df; stroke:#c9862f; }
+      .suite { fill:#eaf7ec; stroke:#3f8f52; }
+      .core { fill:#f2ecff; stroke:#7a5bb5; }
+      .data { fill:#fff8dc; stroke:#b59a2e; }
+      .out { fill:#e9f7f8; stroke:#2f8b93; }
+      .title { font:700 25px Segoe UI,Arial,sans-serif; fill:#1f2933; }
+      .head { font:700 15px Segoe UI,Arial,sans-serif; fill:#1f2933; }
+      .txt { font:13px Segoe UI,Arial,sans-serif; fill:#3e4c59; }
+      .small { font:12px Consolas,monospace; fill:#52606d; }
+      .line { stroke:#52606d; stroke-width:2; marker-end:url(#arrow); fill:none; }
+      .lane { font:700 13px Segoe UI,Arial,sans-serif; fill:#7b8794; letter-spacing:1px; }
+    </style>
+  </defs>
+
+  <text x="40" y="44" class="title">AdactinAutomation — Playwright JS framework architecture</text>
+  <text x="40" y="70" class="txt">Source: repository files. Generated for the project documentation; not an external tool output.</text>
+
+  <!-- Lane labels -->
+  <text x="40" y="112" class="lane">TRIGGERS + CI</text>
+  <text x="40" y="252" class="lane">CONTAINER</text>
+  <text x="40" y="402" class="lane">TEST RUNTIME</text>
+  <text x="40" y="592" class="lane">SUPPORT LAYERS</text>
+  <text x="40" y="770" class="lane">EVIDENCE</text>
+
+  <!-- Triggers / CI -->
+  <rect x="40" y="124" width="180" height="66" class="box ci"/>
+  <text x="56" y="150" class="head">GitHub push</text>
+  <text x="56" y="172" class="small">origin/main</text>
+
+  <rect x="250" y="124" width="180" height="66" class="box ci"/>
+  <text x="266" y="150" class="head">Nightly schedule</text>
+  <text x="266" y="172" class="small">cron: H 3 * * *</text>
+
+  <rect x="460" y="124" width="195" height="66" class="box ci"/>
+  <text x="476" y="150" class="head">ngrok webhook</text>
+  <text x="476" y="172" class="small">/github-webhook/ · 200</text>
+
+  <rect x="690" y="116" width="245" height="82" class="box ci"/>
+  <text x="706" y="143" class="head">Jenkins automationjenkinsgit</text>
+  <text x="706" y="165" class="small">Pipeline script from SCM</text>
+  <text x="706" y="185" class="small">Jenkinsfile · */main</text>
+
+  <line x1="220" y1="157" x2="458" y2="157" class="line"/>
+  <line x1="430" y1="157" x2="458" y2="157" class="line"/>
+  <line x1="655" y1="157" x2="688" y2="157" class="line"/>
+
+  <!-- Container -->
+  <rect x="690" y="248" width="245" height="86" class="box build"/>
+  <text x="706" y="274" class="head">Docker image</text>
+  <text x="706" y="296" class="small">playwright:v1.65.0-jammy</text>
+  <text x="706" y="316" class="small">npm ci + install --with-deps</text>
+
+  <rect x="985" y="248" width="215" height="86" class="box build"/>
+  <text x="1001" y="274" class="head">Container run</text>
+  <text x="1001" y="296" class="small">npx playwright test</text>
+  <text x="1001" y="316" class="small">--project=chromium</text>
+
+  <line x1="812" y1="198" x2="812" y2="246" class="line"/>
+  <line x1="935" y1="291" x2="983" y2="291" class="line"/>
+
+  <!-- Runtime -->
+  <rect x="40" y="416" width="255" height="88" class="box suite"/>
+  <text x="56" y="442" class="head">playwright.config.js</text>
+  <text x="56" y="464" class="small">list + HTML + Allure</text>
+  <text x="56" y="484" class="small">CI: 1 worker · retry 2</text>
+
+  <rect x="335" y="402" width="290" height="116" class="box suite"/>
+  <text x="351" y="428" class="head">UI suites — 11 tests</text>
+  <text x="351" y="452" class="small">positiveTests.spec.js · 5</text>
+  <text x="351" y="473" class="small">negativeTests.spec.js · 5</text>
+  <text x="351" y="494" class="small">endToEnd.spec.js · 1</text>
+
+  <rect x="665" y="402" width="255" height="116" class="box suite"/>
+  <text x="681" y="428" class="head">API suite — 5 tests</text>
+  <text x="681" y="452" class="small">api.spec.js · request fixture</text>
+  <text x="681" y="473" class="small">GET · POST · PUT · DELETE</text>
+  <text x="681" y="494" class="small">status · schema · header · time</text>
+
+  <line x1="1092" y1="334" x2="1092" y2="382" class="line"/>
+  <line x1="1092" y1="382" x2="792" y2="382" class="line"/>
+  <line x1="792" y1="382" x2="792" y2="400" class="line"/>
+  <line x1="480" y1="382" x2="480" y2="400" class="line"/>
+  <line x1="292" y1="460" x2="333" y2="460" class="line"/>
+  <line x1="622" y1="460" x2="663" y2="460" class="line"/>
+
+  <!-- Support layers -->
+  <rect x="40" y="614" width="220" height="108" class="box core"/>
+  <text x="56" y="640" class="head">Hooks / fixtures</text>
+  <text x="56" y="663" class="small">testSetup.js</text>
+  <text x="56" y="684" class="small">auto navigate before each</text>
+  <text x="56" y="705" class="small">screenshot after each</text>
+
+  <rect x="300" y="614" width="290" height="108" class="box core"/>
+  <text x="316" y="640" class="head">Page Objects + BasePage</text>
+  <text x="316" y="663" class="small">6 page classes</text>
+  <text x="316" y="684" class="small">login/logout · waits · alerts</text>
+  <text x="316" y="705" class="small">navigation · screenshots · logs</text>
+
+  <rect x="630" y="614" width="240" height="108" class="box core"/>
+  <text x="646" y="640" class="head">Utilities</text>
+  <text x="646" y="663" class="small">screenshotutil.js</text>
+  <text x="646" y="684" class="small">apiUtil.js</text>
+  <text x="646" y="705" class="small">config.js</text>
+
+  <rect x="910" y="614" width="290" height="108" class="box data"/>
+  <text x="926" y="640" class="head">JSON test data</text>
+  <text x="926" y="663" class="small">loginData · searchData</text>
+  <text x="926" y="684" class="small">bookingData · apiData</text>
+  <text x="926" y="705" class="small">{timestamp} resolved per request</text>
+
+  <line x1="480" y1="518" x2="480" y2="612" class="line"/>
+  <line x1="792" y1="518" x2="792" y2="612" class="line"/>
+  <line x1="260" y1="668" x2="298" y2="668" class="line"/>
+  <line x1="590" y1="668" x2="628" y2="668" class="line"/>
+  <line x1="870" y1="668" x2="908" y2="668" class="line"/>
+  <line x1="1055" y1="518" x2="1055" y2="612" class="line"/>
+
+  <!-- Evidence -->
+  <rect x="40" y="792" width="285" height="66" class="box out"/>
+  <text x="56" y="818" class="head">Playwright HTML</text>
+  <text x="56" y="840" class="small">playwright-report/index.html</text>
+
+  <rect x="365" y="792" width="285" height="66" class="box out"/>
+  <text x="381" y="818" class="head">Allure</text>
+  <text x="381" y="840" class="small">allure-results → allure-report</text>
+
+  <rect x="690" y="792" width="285" height="66" class="box out"/>
+  <text x="706" y="818" class="head">Archived evidence</text>
+  <text x="706" y="840" class="small">screenshots · video · traces · logs</text>
+
+  <line x1="182" y1="722" x2="182" y2="790" class="line"/>
+  <line x1="507" y1="722" x2="507" y2="790" class="line"/>
+  <line x1="832" y1="722" x2="832" y2="790" class="line"/>
+</svg>

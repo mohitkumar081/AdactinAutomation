@@ -6,6 +6,11 @@ Implemented as per **PART 04 (Allure Reporting)**, **PART 05 (Hooks in Playwrigh
 
 ```text
 AdactinAutomation/
+├── README.md                   # setup, execution, CI/CD and deliverables
+├── docs/
+│   ├── ARCHITECTURE.md         # Mermaid layer diagram + call flow
+│   ├── architecture.svg        # same diagram as an image
+│   └── evidence/               # successful Jenkins run screenshots
 ├── playwright.config.js        # Allure reporter already configured (Part 04)
 ├── pages/
 │   ├── BasePage.js             # Core reusable methods + navigate(url)
@@ -19,6 +24,8 @@ AdactinAutomation/
 │   └── testSetup.js            # Hooks + Allure (auto navigation + afterEach)
 ├── utils/
 │   ├── screenshotutil.js       # Screenshot utility
+│   ├── waitutil.js             # Common wait utility used by BasePage
+│   ├── testdata.js             # Fresh JSON loader + DATASET_INDEX selection
 │   ├── apiUtil.js              # API helpers (schema/headers/time/payloads)
 │   └── config.js               # Shared constants (APP_URL, timeouts)
 ├── testdata/
@@ -72,12 +79,15 @@ npm run allure:open
   - `attachStepScreenshot(page, name)` — during-test step screenshot.
   - `attachScreenshotAfterEach(page, testInfo)` — `Final Screenshot` after every test,
     plus `Failure Screenshot` when status != expectedStatus.
+- `utils/waitutil.js` — explicit/implicit-style waits, shared by `BasePage`.
+- `utils/testdata.js` — re-reads JSON data and supports `DATASET_INDEX` for `validUsers[]`.
 - `utils/config.js` — `APP_URL`, timeout constants.
 
 ### Hooks (setup & teardown)
 `fixtures/testSetup.js`:
+- `test.beforeAll()` / `test.afterAll()` — suite-level init and teardown markers.
 - `base.extend({ pageSetup: [...] , { auto: true } })` opens `APP_URL` before every test.
-- `test.afterEach()` attaches screenshots to Allure / HTML report.
+- `test.afterEach()` attaches a lifecycle log plus final/failure screenshots.
 - Exports `{ test, expect }`; UI specs import from this fixture file.
 - API spec uses Playwright's built-in `request` fixture directly, so no browser
   navigation happens for API tests.
@@ -146,11 +156,19 @@ npm run allure:generate
 - Triggers: `githubPush()` (GitHub webhook via ngrok) and `cron('H 3 * * *')`
   (nightly schedule).
 - Required Jenkins plugins: Pipeline, Git, GitHub Integration, NodeJS,
-  HTML Publisher, Allure Jenkins Plugin. See `JENKINS_SETUP.md` for the full
-  one-time setup checklist.
+  HTML Publisher, Allure Jenkins Plugin. Allure additionally needs a configured
+  tool: name `Allure`, home `C:\Users\Mohat Kumar\AppData\Roaming\npm`.
+  See `JENKINS_SETUP.md` for the full one-time setup checklist.
 - `jenkins-build.cmd` was verified locally with `%BUILD_NUMBER%=2`: image built
   and loaded with `--load`, **16 passed (3.1m)**, HTML report copied to
   `playwright-report/index.html` (1.25 MB), 613 Allure files archived, and the
   container removed. `docker build --load` matters when Docker uses the
   BuildKit/docker-container builder; without it the image stays only in cache
   and `docker run` fails with "Unable to find image".
+- Jenkins runs as `LocalSystem`, where the buildx CLI plugin is missing. The
+  first Jenkins build therefore rejected `--load` with `unknown flag`. The
+  `Jenkinsfile` now tries `--load` and falls back to plain `docker build`, which
+  loads the image into the local daemon with the legacy builder.
+- Jenkins build #2 ran all **16 tests passed (4.0m)**. The build itself went red
+  only because the Allure tool was not configured yet; that tool is now added,
+  so the publish stage can finish on the next run.

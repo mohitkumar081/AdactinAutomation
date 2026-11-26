@@ -7,7 +7,8 @@ const BookingPage = require("../pages/BookingPage");
 const BookingConfirmationPage = require("../pages/BookingConfirmationPage");
 const ItineraryPage = require("../pages/ItineraryPage");
 
-const loginData = require("../testdata/loginData.json");
+const { loginUser } = require("../utils/testdata");
+const validUser = loginUser();
 const searchData = require("../testdata/searchData.json");
 const bookingData = require("../testdata/bookingData.json");
 
@@ -34,8 +35,8 @@ test("TC-01: Complete End-to-End Hotel Booking Flow", async ({ page }) => {
   await loginPage.navigate();
 
   await loginPage.login(
-    loginData.validUser.username,
-    loginData.validUser.password,
+    validUser.username,
+    validUser.password,
   );
 
   await expect(page).toHaveURL(/SearchHotel\.php/, {

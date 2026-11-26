@@ -6,8 +6,13 @@ const { attachScreenshotAfterEach } = require("../utils/screenshotutil");
 
 /**
  * Manual Part 05, Step 04: Hooks + Allure.
- * Auto fixture opens the application before every test; afterEach attaches
- * Final / Failure screenshots to the report.
+ *
+ * Playwright owns browser/context/page creation and closure through its built-in
+ * fixtures. These hooks add the project-specific lifecycle around them:
+ *   beforeAll  - suite-level init marker
+ *   auto       - open APP_URL before every test (beforeEach equivalent)
+ *   afterEach  - lifecycle log + final/failure screenshots
+ *   afterAll   - suite-level teardown marker
  */
 const test = base.extend({
   pageSetup: [
@@ -20,7 +25,19 @@ const test = base.extend({
   ],
 });
 
+test.beforeAll(async () => {
+  console.log("[hooks] UI suite setup — browser fixtures ready");
+});
+
+test.afterAll(async () => {
+  console.log("[hooks] UI suite teardown — reports flushed by Playwright");
+});
+
 test.afterEach(async ({ page }, testInfo) => {
+  await testInfo.attach("Test lifecycle", {
+    body: `status=${testInfo.status}; project=${testInfo.project.name}; retry=${testInfo.retry}`,
+    contentType: "text/plain",
+  });
   await attachScreenshotAfterEach(page, testInfo);
 });
 

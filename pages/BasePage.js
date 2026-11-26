@@ -1,4 +1,5 @@
 const { test, expect } = require("@playwright/test");
+const wait = require("../utils/waitutil");
 
 /**
  * Core / generalized modular methods shared by every Page Object.
@@ -38,45 +39,45 @@ class BasePage {
         waitUntil: "domcontentloaded",
       });
       this.log(`Navigated to ${url}`);
+      await this.attachLog("Navigation log", `Navigated to ${url}`);
       return response;
     });
   }
 
   async waitForLoadState(state = "domcontentloaded", timeout = 60000) {
-    await this.page.waitForLoadState(state, { timeout });
+    return wait.waitForLoadState(this.page, state, timeout);
   }
 
   async waitForURL(pattern, timeout = 60000, waitUntil = "domcontentloaded") {
-    await this.page.waitForURL(pattern, { timeout, waitUntil });
+    await wait.waitForURL(this.page, pattern, timeout, waitUntil);
     this.log(`URL matched: ${pattern}`);
   }
 
   // ------------------------------------------------------------------
-  // Wait conditions
+  // Wait conditions (implemented once in utils/waitutil.js)
   // ------------------------------------------------------------------
   // Playwright has no true implicit wait; this emulates it globally.
   setImplicitTimeout(milliseconds = 30000) {
-    this.page.setDefaultTimeout(milliseconds);
+    return wait.setImplicitTimeout(this.page, milliseconds);
   }
 
   async waitForVisible(locator, timeout = 30000, name = "element") {
-    await expect(locator).toBeVisible({ timeout });
+    const found = await wait.waitForVisible(locator, timeout, name);
     this.log(`${name} is visible`);
-    return locator;
+    return found;
   }
 
   async waitForHidden(locator, timeout = 30000, name = "element") {
-    await expect(locator).toBeHidden({ timeout });
+    await wait.waitForHidden(locator, timeout);
     this.log(`${name} is hidden`);
   }
 
-  async waitForEnabled(locator, timeout = 30000, name = "element") {
-    await expect(locator).toBeEnabled({ timeout });
-    return locator;
+  async waitForEnabled(locator, timeout = 30000) {
+    return wait.waitForEnabled(locator, timeout);
   }
 
   async waitForText(locator, text, timeout = 30000) {
-    await expect(locator).toHaveText(text, { timeout });
+    return wait.waitForText(locator, text, timeout);
   }
 
   // ------------------------------------------------------------------
@@ -185,6 +186,7 @@ class BasePage {
       await expect(
         this.page.getByText("You have successfully logged out."),
       ).toBeVisible({ timeout: 120000 });
+      await this.attachLog("Logout log", "Logout verified; login page restored");
       await this.attachScreenshot("Logout - successful");
       await this.click(
         this.page.getByRole("link", { name: /Click here to login again/i }),
