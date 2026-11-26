@@ -108,6 +108,12 @@ git push origin main
 - No test should `console.log` full auth responses/tokens — Jenkins stores console output in plain text.
 - `node_modules` stays out of Git and out of the Docker build context.
 
+## Troubleshooting
+- If the console says `Unable to find image 'playwright-tests:...' locally` right
+  after a successful build, Docker used the BuildKit container builder and kept
+  the result only in cache. Both `jenkins-build.cmd` and `Jenkinsfile` already use
+  `docker build --load` to load the image into the local daemon before `docker run`.
+
 ## Daily checklist
 - Docker Desktop whale icon steady (engine up)
 - http://localhost:8080 reachable

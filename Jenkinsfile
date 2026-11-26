@@ -32,7 +32,9 @@ pipeline {
         stage('Build Docker image') {
             steps {
                 echo "Building ${env.IMAGE_NAME}"
-                bat 'docker build -t %IMAGE_NAME% .'
+                // --load keeps the image in the local daemon when Docker uses
+                // the BuildKit/docker-container builder.
+                bat 'docker build --load -t %IMAGE_NAME% .'
             }
         }
 

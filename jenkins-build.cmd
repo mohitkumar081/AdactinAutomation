@@ -9,7 +9,9 @@ set IMAGE_NAME=playwright-tests:jenkins-test
 set CONTAINER_NAME=playwright-tests-jenkins-%BUILD_NUMBER%
 echo.
 echo [1/4] Building Docker image...
-docker build -t %IMAGE_NAME% .
+REM --load is required with Docker BuildKit: keep the image in the local daemon
+REM so the following "docker run" can find it.
+docker build --load -t %IMAGE_NAME% .
 if errorlevel 1 (
     echo Docker build FAILED
     exit /b 1
