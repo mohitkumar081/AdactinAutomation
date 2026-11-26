@@ -1,0 +1,125 @@
+{
+  "baseUrl": "https://api-testing-postman.vercel.app",
+  "endpoints": {
+    "getAllUsers": "/api/v1/users/all-users",
+    "register": "/api/v1/users/register",
+    "login": "/api/v1/users/login",
+    "replaceAccount": "/api/v1/users/replace-account",
+    "deleteAccount": "/api/v1/users/delete-account"
+  },
+  "payloads": {
+    "register": {
+      "fullname": "API Test User",
+      "email": "apitest{timestamp}@example.com",
+      "username": "apitest{timestamp}",
+      "password": "Password123!"
+    },
+    "login": {
+      "email": "apitest{timestamp}@example.com",
+      "username": "apitest{timestamp}",
+      "password": "Password123!"
+    },
+    "replaceAccount": {
+      "fullname": "Updated User",
+      "email": "updated{timestamp}@example.com",
+      "username": "updated{timestamp}"
+    },
+    "loginUpdated": {
+      "email": "updated{timestamp}@example.com",
+      "username": "updated{timestamp}",
+      "password": "Password123!"
+    }
+  },
+  "expected": {
+    "status": {
+      "getAllUsers": 200,
+      "register": 201,
+      "login": 200,
+      "replaceAccount": 200,
+      "deleteAccount": 200
+    },
+    "messages": {
+      "register": "User registered Successfully",
+      "login": "User Logged in successfully",
+      "replaceAccount": "User details replaced successfully",
+      "deleteAccount": "User account deleted successfully"
+    },
+    "headers": {
+      "contentType": "application/json"
+    },
+    "maxResponseTimeMs": 15000,
+    "schemas": {
+      "getAllUsers": {
+        "type": "object",
+        "required": ["statusCode", "data"],
+        "properties": {
+          "statusCode": { "type": "number" },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["_id", "username", "email", "fullname"]
+            }
+          }
+        }
+      },
+      "register": {
+        "type": "object",
+        "required": ["statusCode", "data", "message", "success"],
+        "properties": {
+          "statusCode": { "type": "number" },
+          "data": {
+            "type": "object",
+            "required": ["_id", "username", "email", "fullname"]
+          },
+          "message": { "type": "string" },
+          "success": { "type": "boolean" }
+        }
+      },
+      "login": {
+        "type": "object",
+        "required": ["statusCode", "data", "message", "success"],
+        "properties": {
+          "statusCode": { "type": "number" },
+          "data": {
+            "type": "object",
+            "required": ["user", "accessToken", "refreshToken"],
+            "properties": {
+              "user": {
+                "type": "object",
+                "required": ["_id", "username", "email"]
+              },
+              "accessToken": { "type": "string" },
+              "refreshToken": { "type": "string" }
+            }
+          },
+          "message": { "type": "string" },
+          "success": { "type": "boolean" }
+        }
+      },
+      "replaceAccount": {
+        "type": "object",
+        "required": ["statusCode", "data", "message", "success"],
+        "properties": {
+          "statusCode": { "type": "number" },
+          "data": {
+            "type": "object",
+            "required": ["_id", "username", "email", "fullname"]
+          },
+          "message": { "type": "string" },
+          "success": { "type": "boolean" }
+        }
+      },
+      "deleteAccount": {
+        "type": "object",
+        "required": ["statusCode", "data", "message", "success"],
+        "properties": {
+          "statusCode": { "type": "number" },
+          "data": { "type": "object" },
+          "message": { "type": "string" },
+          "success": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

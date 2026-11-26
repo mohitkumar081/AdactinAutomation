@@ -1,0 +1,26 @@
+{
+  "validUsers": [
+    {
+      "username": "haristester01",
+      "password": "haristester01",
+      "ExpectedMsg": "Welcome to Adactin Group of Hotels"
+    },
+    {
+      "username": "RandomGuy9571",
+      "password": "Random9571",
+      "ExpectedMsg": "Welcome to Adactin Group of Hotels"
+    }
+  ],
+  "validUser": {
+    "username": "haristester01",
+    "password": "haristester01"
+  },
+  "invalidUser": {
+    "username": "invalid_user",
+    "password": "wrong_password"
+  },
+  "emptyUser": {
+    "username": "",
+    "password": ""
+  }
+}

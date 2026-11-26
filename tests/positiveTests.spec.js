@@ -1,0 +1,257 @@
+const { test, expect } = require("../fixtures/testSetup");
+
+const LoginPage = require("../pages/LoginPage");
+const SearchHotelPage = require("../pages/SearchHotelPage");
+const SelectHotelPage = require("../pages/SelectHotelPage");
+const BookingPage = require("../pages/BookingPage");
+const BookingConfirmationPage = require("../pages/BookingConfirmationPage");
+
+const loginData = require("../testdata/loginData.json");
+const searchData = require("../testdata/searchData.json");
+const bookingData = require("../testdata/bookingData.json");
+
+// Helper Function: Generate Dynamic Dates
+function getBookingDates() {
+  const today = new Date();
+
+  const checkIn = new Date(today);
+  checkIn.setDate(today.getDate() + 1);
+
+  const checkOut = new Date(today);
+  checkOut.setDate(today.getDate() + 2);
+
+  const formatDate = (date) => {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  };
+
+  return {
+    checkIn: formatDate(checkIn),
+    checkOut: formatDate(checkOut),
+  };
+}
+
+// Helper Function: Complete Hotel Booking
+async function completeHotelBooking(page) {
+  const loginPage = new LoginPage(page);
+  const searchPage = new SearchHotelPage(page);
+  const selectHotelPage = new SelectHotelPage(page);
+  const bookingPage = new BookingPage(page);
+
+  // Login
+  await loginPage.navigate();
+
+  await loginPage.login(
+    loginData.validUser.username,
+    loginData.validUser.password,
+  );
+
+  await expect(page).toHaveURL(/SearchHotel\.php/);
+
+  // Generate Dynamic Dates
+  const dates = getBookingDates();
+
+  // Search Hotel
+  await searchPage.searchHotel(
+    searchData.validSearch,
+    dates.checkIn,
+    dates.checkOut,
+  );
+
+  await expect(page).toHaveURL(/SelectHotel\.php/);
+
+  // Select First Hotel
+  await selectHotelPage.selectFirstHotel();
+
+  await expect(page).toHaveURL(/BookHotel\.php/);
+
+  // Fill Booking Details
+  await bookingPage.fillBookingDetails(bookingData.validBooking);
+
+  // Submit Booking
+  await bookingPage.bookHotel();
+
+  await page.waitForURL(/BookingConfirm\.php/, {
+    timeout: 60000,
+  });
+}
+
+// TC-02: Successful Login with Valid Credentials
+test("TC-02: Successful Login with Valid Credentials", async ({ page }) => {
+  const loginPage = new LoginPage(page);
+
+  await loginPage.navigate();
+
+  await expect(page).toHaveTitle(/Adactin.com/);
+
+  await loginPage.login(
+    loginData.validUser.username,
+    loginData.validUser.password,
+  );
+
+  await expect(page).toHaveURL(/SearchHotel\.php/);
+
+  await expect(page.locator("#location")).toBeVisible();
+
+  console.log("TC-02: Login successful");
+});
+
+// TC-03: Successful Hotel Search with Valid Details
+test("TC-03: Successful Hotel Search with Valid Details", async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  const searchPage = new SearchHotelPage(page);
+
+  // Login
+  await loginPage.navigate();
+
+  await loginPage.login(
+    loginData.validUser.username,
+    loginData.validUser.password,
+  );
+
+  await expect(page).toHaveURL(/SearchHotel\.php/);
+
+  // Generate Dynamic Dates
+  const dates = getBookingDates();
+
+  // Search Hotel
+  await searchPage.searchHotel(
+    searchData.validSearch,
+    dates.checkIn,
+    dates.checkOut,
+  );
+
+  // Verify Search Results
+  await expect(page).toHaveURL(/SelectHotel\.php/);
+
+  await expect(
+    page.locator("#radiobutton_0, #radiobutton_1").first(),
+  ).toBeVisible();
+
+  console.log("TC-03: Hotel search successful");
+});
+
+// TC-04: Successful Hotel Selection and Booking
+test("TC-04: Successful Hotel Selection and Booking", async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  const searchPage = new SearchHotelPage(page);
+  const selectHotelPage = new SelectHotelPage(page);
+  const bookingPage = new BookingPage(page);
+
+  // Login
+  await loginPage.navigate();
+
+  await loginPage.login(
+    loginData.validUser.username,
+    loginData.validUser.password,
+  );
+
+  await expect(page).toHaveURL(/SearchHotel\.php/);
+
+  // Generate Dynamic Dates
+  const dates = getBookingDates();
+
+  // Search Hotel
+  await searchPage.searchHotel(
+    searchData.validSearch,
+    dates.checkIn,
+    dates.checkOut,
+  );
+
+  await expect(page).toHaveURL(/SelectHotel\.php/);
+
+  // Select First Hotel
+  await selectHotelPage.selectFirstHotel();
+
+  await expect(page).toHaveURL(/BookHotel\.php/);
+
+  // Verify Booking Details
+  await expect(bookingPage.hotelName).toBeVisible();
+  await expect(bookingPage.location).toBeVisible();
+  await expect(bookingPage.roomType).toBeVisible();
+  await expect(bookingPage.numberOfRooms).toBeVisible();
+  await expect(bookingPage.totalDays).toBeVisible();
+  await expect(bookingPage.totalPrice).toBeVisible();
+  await expect(bookingPage.gst).toBeVisible();
+  await expect(bookingPage.finalPrice).toBeVisible();
+  await expect(bookingPage.firstName).toBeVisible();
+
+  // Fill Booking Details
+  await bookingPage.fillBookingDetails(bookingData.validBooking);
+
+  // Submit Booking
+  await expect(bookingPage.bookNowButton).toBeEnabled();
+
+  await bookingPage.bookHotel();
+
+  // Verify Booking Confirmation
+  await page.waitForURL(/BookingConfirm\.php/, {
+    timeout: 60000,
+  });
+
+  const orderNumberField = page.locator("#order_no");
+
+  await expect(orderNumberField).toBeVisible({
+    timeout: 30000,
+  });
+
+  const orderNumber = await orderNumberField.inputValue();
+
+  console.log("Booking Confirmation URL:", page.url());
+  console.log("Generated Booking ID:", orderNumber);
+
+  expect(orderNumber).not.toBe("");
+
+  console.log("TC-04: Hotel booking successful");
+});
+
+// TC-05: Verify Booking Confirmation and Order Number
+test("TC-05: Verify Booking Confirmation and Order Number", async ({
+  page,
+}) => {
+  const confirmationPage = new BookingConfirmationPage(page);
+
+  // Complete Booking
+  await completeHotelBooking(page);
+
+  // Verify Confirmation Page
+  await expect(page).toHaveURL(/BookingConfirm\.php/);
+
+  await expect(confirmationPage.orderNumber).toBeVisible();
+
+  const orderNumber = await confirmationPage.getOrderNumber();
+
+  expect(orderNumber.trim()).not.toBe("");
+
+  console.log("Booking Order Number:", orderNumber);
+  console.log("TC-05: Booking confirmation verified");
+});
+
+// TC-06: Successful Logout After Booking
+test("TC-06: Successful Logout After Booking", async ({ page }) => {
+  const confirmationPage = new BookingConfirmationPage(page);
+
+  // Complete Booking
+  await completeHotelBooking(page);
+
+  // Verify Booking Confirmation
+  await expect(confirmationPage.orderNumber).toBeVisible();
+
+  const orderNumber = await confirmationPage.getOrderNumber();
+
+  expect(orderNumber.trim()).not.toBe("");
+
+  console.log("Booking Order Number:", orderNumber);
+
+  // Logout (the page object performs the full verified logout flow:
+  // Logout.php message -> "Click here to login again" -> login page).
+  await confirmationPage.logout();
+
+  await expect(page.locator("#username")).toBeVisible();
+  await expect(page.locator("#password")).toBeVisible();
+
+  console.log("TC-06: Booking completed and user logged out successfully");
+});

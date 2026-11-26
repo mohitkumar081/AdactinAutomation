@@ -1,0 +1,27 @@
+{
+  "validBooking": {
+    "firstName": "Mohat",
+    "lastName": "Kumar",
+    "address": "Karachi Pakistan",
+    "creditCardNumber": "1111111111111111",
+    "creditCardType": "VISA",
+    "expiryMonth": "12",
+    "expiryYear": "2028",
+    "cvv": "1122"
+  },
+  "missingDetails": {
+    "firstName": "",
+    "lastName": "",
+    "address": ""
+  },
+  "invalidCard": {
+    "firstName": "Mohat",
+    "lastName": "Kumar",
+    "address": "Karachi Pakistan",
+    "creditCardNumber": "1234",
+    "creditCardType": "",
+    "expiryMonth": "",
+    "expiryYear": "",
+    "cvv": ""
+  }
+}

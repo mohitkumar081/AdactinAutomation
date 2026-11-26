@@ -1,0 +1,18 @@
+{
+  "validSearch": {
+    "location": "Sydney",
+    "hotel": "Hotel Creek",
+    "roomType": "Standard",
+    "numberOfRooms": "1",
+    "adultsPerRoom": "2",
+    "childrenPerRoom": "0"
+  },
+  "emptySearch": {
+    "location": "",
+    "hotel": "",
+    "roomType": "",
+    "numberOfRooms": "",
+    "adultsPerRoom": "",
+    "childrenPerRoom": ""
+  }
+}
