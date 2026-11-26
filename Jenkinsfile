@@ -32,9 +32,20 @@ pipeline {
         stage('Build Docker image') {
             steps {
                 echo "Building ${env.IMAGE_NAME}"
-                // --load keeps the image in the local daemon when Docker uses
-                // the BuildKit/docker-container builder.
-                bat 'docker build --load -t %IMAGE_NAME% .'
+                script {
+                    // BuildKit/docker-container needs --load so the image is
+                    // available to `docker run`. Jenkins runs as LocalSystem and
+                    // may use the legacy builder, which rejects --load but already
+                    // stores the image in the local daemon. Retry without it then.
+                    def loadExitCode = bat(
+                        script: 'docker build --load -t %IMAGE_NAME% .',
+                        returnStatus: true
+                    )
+                    if (loadExitCode != 0) {
+                        echo '--load unsupported by this Docker CLI; retrying with legacy builder'
+                        bat 'docker build -t %IMAGE_NAME% .'
+                    }
+                }
             }
         }
 
