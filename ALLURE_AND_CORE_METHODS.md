@@ -56,7 +56,7 @@ AdactinAutomation/
 
 Commands:
 ```powershell
-cd "C:\Users\Mohat Kumar\Desktop\AdactinAutomation"
+cd AdactinAutomation
 npx playwright test --project=chromium --headed
 npm run allure:generate
 npm run allure:open
@@ -135,12 +135,7 @@ docker build --load -t playwright-tests .
 docker run --rm playwright-tests
 ```
 
-If `docker` is not on your PowerShell PATH, use the installed CLI directly:
-```powershell
-$d = "C:\Users\Mohat Kumar\AppData\Local\Programs\DockerDesktop\resources\bin\docker.exe"
-& $d build --load -t playwright-tests .
-& $d run --rm playwright-tests
-```
+If `docker` is not on your PATH, add the Docker Desktop `resources/bin` folder to the shell PATH first, then use the same commands.
 
 To keep the Allure JSON results on the host after the container exits:
 ```powershell
@@ -157,7 +152,7 @@ npm run allure:generate
   (nightly schedule).
 - Required Jenkins plugins: Pipeline, Git, GitHub Integration, NodeJS,
   HTML Publisher, Allure Jenkins Plugin. Allure additionally needs a configured
-  tool: name `Allure`, home `C:\Users\Mohat Kumar\AppData\Roaming\npm`.
+  tool: name `Allure`, home = the global npm folder that contains `allure.cmd`.
   See `JENKINS_SETUP.md` for the full one-time setup checklist.
 - `jenkins-build.cmd` was verified locally with `%BUILD_NUMBER%=2`: image built
   and loaded with `--load`, **16 passed (3.1m)**, HTML report copied to

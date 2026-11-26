@@ -9,17 +9,17 @@ file or in Git — the GitHub PAT lives only in the Jenkins credential store.
 | --- | --- |
 | Jenkins | 2.580.3, installed via MSI, service `Jenkins` = Running / Automatic |
 | URL | <http://localhost:8080> |
-| Java home used by installer | `C:\Users\Mohat Kumar\Downloads\jdk-21\jdk-21.0.13.1+2` |
-| Jenkins home | `C:\ProgramData\Jenkins\.jenkins` |
+| Java | JDK 21, installed locally for the Jenkins service |
+| Jenkins home | Default Jenkins home from the MSI install |
 | Repository | `https://github.com/mohitkumar081/AdactinAutomation.git` |
 | Branch | `*/main` |
 | Job | `automationjenkinsgit` — Pipeline script from SCM, script path `Jenkinsfile` |
 | Credential ID | `github-playwright` — Username with password, username `mohitkumar081` |
 | Plugins | Git, GitHub, GitHub Integration, Pipeline, HTML Publisher, Allure Jenkins Plugin, NodeJS |
-| Global `PATH` | `C:\Users\Mohat Kumar\AppData\Local\Programs\DockerDesktop\resources\bin;%PATH%` |
-| Allure tool | Name `Allure`, Home `C:\Users\Mohat Kumar\AppData\Roaming\npm` |
-| ngrok | `C:\Users\Mohat Kumar\Downloads\ngrok-v3-stable-windows-amd64\ngrok.exe`, config valid |
-| Tunnel script | `D:\Docker\ngrok-tunnel.cmd` |
+| Global `PATH` | Docker Desktop `resources/bin` folder added before `%PATH%` |
+| Allure tool | Name `Allure`, Home = global npm folder containing `allure.cmd` |
+| ngrok | ngrok v3 executable, config valid |
+| Tunnel script | Kept outside the repository so tokens never enter Git |
 | Webhook | `https://crawlers-tadpole-saffron.ngrok-free.dev/github-webhook/`, JSON, push only |
 | Trigger | `githubPush()` + `cron('H 3 * * *')` |
 
@@ -50,7 +50,7 @@ The Pipeline job reads `Jenkinsfile` from GitHub and does not use that `.cmd`.
 5. Archives artifacts, publishes the Playwright HTML report and the Allure report.
 6. Removes the container in `post { always }`.
 
-Successful-run screenshots are committed under [`docs/evidence/`](docs/evidence/).
+Selected successful-run screenshots can be kept under `docs/evidence/`.
 
 ## Docker quirk on this machine
 
@@ -72,7 +72,7 @@ leaves the image only in cache and `docker run` says
 ## ngrok note
 
 The free ngrok URL changes whenever the tunnel restarts. When
-`D:\Docker\ngrok-tunnel.cmd` is restarted, copy the new `https://...ngrok-free.dev`
+the tunnel script is restarted, copy the new `https://...ngrok-free.dev`
 URL into GitHub → Settings → Webhooks → Payload URL, keeping the trailing
 `/github-webhook/`. A static ngrok domain avoids this step.
 
@@ -81,7 +81,7 @@ URL into GitHub → Settings → Webhooks → Payload URL, keeping the trailing
 | Symptom | Fix |
 | --- | --- |
 | Jenkins console `403` before login | Expected. Log in, or use the Jenkins API token for automation. |
-| `No Allure installation found` | Manage Jenkins → Tools → Allure; name `Allure`, home `C:\Users\Mohat Kumar\AppData\Roaming\npm`. |
+| `No Allure installation found` | Manage Jenkins → Tools → Allure; name `Allure`, home = global npm folder containing `allure.cmd`. |
 | `unknown flag: --load` | Legacy Docker builder. Do not panic; the `Jenkinsfile` retries without the flag. |
 | `Unable to find image ... locally` | BuildKit kept the image in cache only. Add `--load` when your CLI supports it. |
 | Webhook not triggering | Check the tunnel is online and the payload URL still matches the current ngrok URL. Recent Deliveries must show `200`. |
