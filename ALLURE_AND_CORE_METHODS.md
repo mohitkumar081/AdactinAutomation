@@ -108,8 +108,8 @@ npm run test:api
   verified separately by TC-06. The shared account's Booked Itinerary page is
   too heavy for a reliable logout navigation inside the E2E flow.
 - `Dockerfile` is based on `mcr.microsoft.com/playwright:v1.65.0-jammy` (tag
-  matches the Playwright version in `package-lock.json`), installs dependencies
-  with `npm install`, copies the framework, runs
+  matches the Playwright version in `package-lock.json`), installs locked
+  dependencies with `npm ci`, copies the framework, runs
   `npx playwright install --with-deps`, and executes the Chromium suite via
   `CMD ["npx", "playwright", "test", "--project=chromium"]`.
 - `ENV CI=true` makes `playwright.config.js` use a single worker with retries —
@@ -137,3 +137,14 @@ To keep the Allure JSON results on the host after the container exits:
 docker run --rm -v "${PWD}\allure-results:/app/allure-results" playwright-tests
 npm run allure:generate
 ```
+
+## 10) Jenkins CI/CD (Part 08)
+- `Jenkinsfile` is a **declarative pipeline**: checkout → `docker build` →
+  `docker run` (all 16 UI + API specs) → copy `playwright-report`,
+  `allure-results` and `test-results` out of the container → publish HTML +
+  Allure reports and archive screenshots/videos/logs → `docker rm -f` in `post`.
+- Triggers: `githubPush()` (GitHub webhook via ngrok) and `cron('H 3 * * *')`
+  (nightly schedule).
+- Required Jenkins plugins: Pipeline, Git, GitHub Integration, NodeJS,
+  HTML Publisher, Allure Jenkins Plugin. See `JENKINS_SETUP.md` for the full
+  one-time setup checklist.
