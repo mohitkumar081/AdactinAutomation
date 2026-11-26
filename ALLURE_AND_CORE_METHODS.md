@@ -121,14 +121,14 @@ npm run test:api
 
 Commands (from the project root):
 ```powershell
-docker build -t playwright-tests .
+docker build --load -t playwright-tests .
 docker run --rm playwright-tests
 ```
 
 If `docker` is not on your PowerShell PATH, use the installed CLI directly:
 ```powershell
 $d = "C:\Users\Mohat Kumar\AppData\Local\Programs\DockerDesktop\resources\bin\docker.exe"
-& $d build -t playwright-tests .
+& $d build --load -t playwright-tests .
 & $d run --rm playwright-tests
 ```
 
@@ -148,3 +148,9 @@ npm run allure:generate
 - Required Jenkins plugins: Pipeline, Git, GitHub Integration, NodeJS,
   HTML Publisher, Allure Jenkins Plugin. See `JENKINS_SETUP.md` for the full
   one-time setup checklist.
+- `jenkins-build.cmd` was verified locally with `%BUILD_NUMBER%=2`: image built
+  and loaded with `--load`, **16 passed (3.1m)**, HTML report copied to
+  `playwright-report/index.html` (1.25 MB), 613 Allure files archived, and the
+  container removed. `docker build --load` matters when Docker uses the
+  BuildKit/docker-container builder; without it the image stays only in cache
+  and `docker run` fails with "Unable to find image".
