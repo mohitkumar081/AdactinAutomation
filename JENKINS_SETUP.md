@@ -16,7 +16,7 @@ file or in Git — the GitHub PAT lives only in the Jenkins credential store.
 | Job | `automationjenkinsgit` — Pipeline script from SCM, script path `Jenkinsfile` |
 | Credential ID | `github-playwright` — Username with password, username `mohitkumar081` |
 | Plugins | Git, GitHub, GitHub Integration, Pipeline, HTML Publisher, Allure Jenkins Plugin, NodeJS |
-| Global `PATH` | Node.js folder and Docker Desktop `resources/bin` folder added before `%PATH%` |
+| Global `PATH` | Full PATH with Windows system folders, Node.js and Docker CLI; no literal `%PATH%` placeholder |
 | Allure tool | Name `Allure`, Home = global npm folder containing `allure.cmd` |
 | ngrok | ngrok v3 executable, config valid |
 | Tunnel script | Kept outside the repository so tokens never enter Git |
@@ -82,7 +82,7 @@ URL into GitHub → Settings → Webhooks → Payload URL, keeping the trailing
 | --- | --- |
 | Jenkins console `403` before login | Expected. Log in, or use the Jenkins API token for automation. |
 | `No Allure installation found` | Manage Jenkins → Tools → Allure; name `Allure`, home = global npm folder containing `allure.cmd`. |
-| Allure says `'node' is not recognized` | Add the Node.js install folder to Jenkins global PATH and restart the build. |
+| Allure says `'node' is not recognized` or `spawn cmd.exe ENOENT` | Keep Windows system folders in Jenkins global PATH; do not replace it with a literal `%PATH%` placeholder. |
 | `unknown flag: --load` | Legacy Docker builder. Do not panic; the `Jenkinsfile` retries without the flag. |
 | `Unable to find image ... locally` | BuildKit kept the image in cache only. Add `--load` when your CLI supports it. |
 | Webhook not triggering | Check the tunnel is online and the payload URL still matches the current ngrok URL. Recent Deliveries must show `200`. |
