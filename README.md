@@ -81,7 +81,8 @@ AdactinAutomation/
 ├── JENKINS_SETUP.md
 ├── docs/
 │   ├── ARCHITECTURE.md
-│   └── architecture.svg
+│   ├── architecture.svg
+│   └── evidence/
 ├── fixtures/
 │   └── testSetup.js
 ├── pages/
@@ -359,7 +360,7 @@ Locations:
 | Playwright HTML report | `playwright-report/index.html` |
 | Screenshots, videos, traces | `test-results/` |
 
-All of these are generated folders and ignored by Git. Jenkins copies them out of the container and archives them on every build, so the evidence stays available after the workspace is cleaned. Selected successful-run screenshots can be kept under `docs/evidence/`.
+All of these are generated folders and ignored by Git. Jenkins copies them out of the container and archives them on every build, so the evidence stays available after the workspace is cleaned. Screenshots of the successful Jenkins run are in [`docs/evidence/`](docs/evidence/).
 
 More detail is in [`ALLURE_AND_CORE_METHODS.md`](ALLURE_AND_CORE_METHODS.md).
 

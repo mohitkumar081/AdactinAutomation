@@ -50,7 +50,7 @@ The Pipeline job reads `Jenkinsfile` from GitHub and does not use that `.cmd`.
 5. Archives artifacts, publishes the Playwright HTML report and the Allure report.
 6. Removes the container in `post { always }`.
 
-Selected successful-run screenshots can be kept under `docs/evidence/`.
+Build #7 successful-run screenshots are in [`docs/evidence/`](docs/evidence/).
 
 ## Docker quirk on this machine
 
