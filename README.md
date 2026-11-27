@@ -420,6 +420,7 @@ The legacy builder already loads the image into the local daemon. `Jenkinsfile` 
 | Branch | `*/main` |
 | Script path | `Jenkinsfile` |
 | Required plugins | Git, GitHub, GitHub Integration, Pipeline, HTML Publisher, Allure |
+| Global `PATH` | Docker CLI and Node.js are both available to the Jenkins service |
 | Triggers | `githubPush()` and `cron('H 3 * * *')` |
 | Webhook | `https://crawlers-tadpole-saffron.ngrok-free.dev/github-webhook/`, JSON, push only |
 

@@ -153,7 +153,8 @@ npm run allure:generate
 - Required Jenkins plugins: Pipeline, Git, GitHub Integration, NodeJS,
   HTML Publisher, Allure Jenkins Plugin. Allure additionally needs a configured
   tool: name `Allure`, home = the global npm folder that contains `allure.cmd`.
-  See `JENKINS_SETUP.md` for the full one-time setup checklist.
+  Because `allure.cmd` is a Node shim, the Node.js folder must also be on Jenkins'
+  global PATH. See `JENKINS_SETUP.md` for the full one-time setup checklist.
 - `jenkins-build.cmd` was verified locally with `%BUILD_NUMBER%=2`: image built
   and loaded with `--load`, **16 passed (3.1m)**, HTML report copied to
   `playwright-report/index.html` (1.25 MB), 613 Allure files archived, and the
